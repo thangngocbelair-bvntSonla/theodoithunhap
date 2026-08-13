@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#003B70" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Thu nhập TVV" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <title>Dự báo thu nhập TVV 2026</title>
+  <style>
+    :root{
+      --navy:#003B70; --blue:#005BAA; --gold:#C9A227; --light:#F4F8FC;
+      --yellow:#FFF2CC; --red:#C00000; --green:#008000; --text:#1F2937;
+      --border:#D7E0E8; --white:#fff;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--light);color:var(--text)}
+    header{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;padding:18px 16px 22px;position:sticky;top:0;z-index:10;box-shadow:0 2px 10px rgba(0,0,0,.16)}
+    header h1{font-size:20px;margin:0 0 4px}
+    header p{margin:0;font-size:13px;opacity:.9}
+    main{max-width:980px;margin:auto;padding:14px 12px 88px}
+    .card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:14px;box-shadow:0 4px 18px rgba(0,59,112,.06)}
+    .section-title{font-weight:700;color:var(--navy);margin-bottom:10px;font-size:16px}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+    label{display:block;font-size:12px;font-weight:700;color:var(--navy);margin-bottom:5px}
+    input,select{width:100%;padding:11px 10px;border:1px solid #B9C7D4;border-radius:10px;background:var(--yellow);font-size:15px;color:#0040C0;outline:none}
+    input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,91,170,.12)}
+    .months{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+    .month-box{border:1px solid var(--border);border-radius:12px;padding:8px;background:#fafcff}
+    .month-box span{display:block;font-size:12px;font-weight:700;color:var(--navy);margin-bottom:4px}
+    .summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+    .metric{background:#F7FBFF;border:1px solid #D4E6F4;border-radius:12px;padding:10px}
+    .metric small{display:block;color:#5B7083;margin-bottom:4px}
+    .metric strong{font-size:17px;color:var(--navy)}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th{background:var(--navy);color:#fff;text-align:left;padding:9px}
+    td{padding:9px;border-bottom:1px solid #E6EDF3;vertical-align:top}
+    td.money{text-align:right;font-weight:700}
+    tr.total td{background:var(--yellow);color:var(--red);font-size:17px;font-weight:800;border-top:2px solid var(--gold)}
+    .ok{color:var(--green);font-weight:700}
+    .warn{color:var(--red);font-weight:700}
+    .notice{background:#FFF8F8;border:1px solid #F3C7C7;color:var(--red);border-radius:12px;padding:10px;line-height:1.5}
+    .actions{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border-top:1px solid var(--border);padding:10px 12px calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;justify-content:center;z-index:20}
+    button{border:0;border-radius:12px;padding:12px 14px;font-weight:700;font-size:14px;cursor:pointer}
+    .primary{background:var(--blue);color:#fff}
+    .secondary{background:#E7F0F8;color:var(--navy)}
+    .danger{background:#FCE4E4;color:var(--red)}
+    .tiny{font-size:12px;color:#6B7280;line-height:1.45}
+    @media(max-width:700px){.grid,.grid-3,.months,.summary{grid-template-columns:1fr 1fr}.hide-mobile{display:none}}
+    @media(max-width:430px){.grid,.grid-3{grid-template-columns:1fr}.months{grid-template-columns:1fr 1fr}.summary{grid-template-columns:1fr 1fr} th,td{padding:7px;font-size:12px}}
+  </style>
+</head>
+<body>
+<header>
+  <h1>DỰ BÁO THU NHẬP TVV 2026</h1>
+  <p>Nhập dữ liệu – tự tính – lưu trên thiết bị</p>
+</header>
+
+<main>
+  <section class="card">
+    <div class="section-title">1. Thông tin chung</div>
+    <div class="grid">
+      <div><label>Họ và tên TVV</label><input id="name" placeholder="Nhập họ tên"></div>
+      <div><label>Tháng dự báo</label><input id="forecastMonth" type="month" value="2026-07"></div>
+      <div><label>Ngày bắt đầu làm việc</label><input id="startDate" type="date" value="2026-04-16"></div>
+      <div><label>Tỷ lệ hoa hồng FYC/FYP</label><input id="commissionRate" type="number" step="0.01" value="0.30"></div>
+      <div><label>Hoàn thành đào tạo Chặng 1?</label><select id="training"><option value="yes">Có</option><option value="no">Không</option></select></div>
+      <div><label>PR15 cuối quý</label><input id="pr15" type="number" step="0.01" value="0.85"></div>
+      <div><label>TLTP quý</label><input id="tltp" type="number" step="0.01" value="0.88"></div>
+      <div><label>Phí thực thu quý</label><input id="collectedFee" type="number" value="30000000"></div>
+      <div><label>Số quý đã đạt thưởng Quý</label><input id="qualifiedQuarters" type="number" min="0" max="4" value="0"></div>
+      <div><label>Hoạt động trong Quý IV?</label><select id="q4active"><option value="unknown">Chưa xác định</option><option value="yes">Có</option><option value="no">Không</option></select></div>
+      <div><label>IP tháng liền trước ngoài bảng</label><input id="priorOutside" type="number" value="0"></div>
+      <div><label>Thưởng/thi đua khác</label><input id="otherBonus" type="number" value="0"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="section-title">2. IP/FYP từng tháng năm 2026</div>
+    <div class="months" id="months"></div>
+  </section>
+
+  <section class="card">
+    <div class="section-title">3. Kết quả tóm tắt</div>
+    <div class="summary">
+      <div class="metric"><small>Thâm niên</small><strong id="tenure">0 tháng</strong></div>
+      <div class="metric"><small>Chặng TVV mới</small><strong id="stage">-</strong></div>
+      <div class="metric"><small>IP tháng hiện tại</small><strong id="currentIp">0 đ</strong></div>
+      <div class="metric"><small>IP lũy kế quý</small><strong id="quarterIp">0 đ</strong></div>
+      <div class="metric"><small>IP lũy kế chặng</small><strong id="stageIp">0 đ</strong></div>
+      <div class="metric"><small>IP lũy kế năm</small><strong id="yearIp">0 đ</strong></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="section-title">4. Các khoản thu nhập dự kiến</div>
+    <div style="overflow:auto">
+      <table>
+        <thead><tr><th>Khoản thu nhập</th><th class="hide-mobile">Trạng thái</th><th style="text-align:right">Số tiền</th></tr></thead>
+        <tbody id="incomeRows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="section-title">5. Cảnh báo chính sách</div>
+    <div id="warnings" class="notice">Chưa có cảnh báo.</div>
+    <p class="tiny">Kết quả là dự báo theo dữ liệu nhập. Thưởng chặng, thưởng quý và thưởng năm chỉ được chi trả khi đủ điều kiện chính thức của Công ty.</p>
+  </section>
+</main>
+
+<div class="actions">
+  <button class="primary" onclick="calculate()">TÍNH THU NHẬP</button>
+  <button class="secondary" onclick="saveData()">LƯU DỮ LIỆU</button>
+  <button class="danger" onclick="resetData()">NHẬP LẠI</button>
+</div>
+
+<script>
+const fmt = n => new Intl.NumberFormat('vi-VN').format(Math.round(Number(n)||0)) + ' đ';
+const monthNames = ['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6','Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'];
+
+function buildMonths(){
+  const wrap=document.getElementById('months');
+  wrap.innerHTML='';
+  monthNames.forEach((m,i)=>{
+    const d=document.createElement('div');
+    d.className='month-box';
+    d.innerHTML=`<span>${m}</span><input id="ip${i+1}" type="number" value="0" inputmode="numeric">`;
+    wrap.appendChild(d);
+  });
+}
+function val(id){ return Number(document.getElementById(id).value)||0; }
+function str(id){ return document.getElementById(id).value; }
+
+function calcTenure(start, forecast){
+  if(!start || !forecast) return 0;
+  const s=new Date(start+'T00:00:00');
+  const f=new Date(forecast+'-01T00:00:00');
+  if(f<s) return 0;
+  return (f.getFullYear()-s.getFullYear())*12 + f.getMonth()-s.getMonth()+1;
+}
+function productivityRate(ip, prior){
+  if(prior<=3000000) return 0;
+  if(ip>=50000000) return .18;
+  if(ip>=24000000) return .15;
+  if(ip>=12000000) return .10;
+  return 0;
+}
+function quarterRate(ip){
+  if(ip>=500000000) return .25;
+  if(ip>=350000000) return .20;
+  if(ip>=250000000) return .18;
+  if(ip>=150000000) return .15;
+  if(ip>=90000000) return .13;
+  if(ip>=60000000) return .10;
+  if(ip>=24000000) return .08;
+  return 0;
+}
+function adjustment(pr15,tltp,fee){
+  if(pr15<.85) return 0;
+  if(tltp>=.88) return fee>=30000000 ? tltp/.88 : 1;
+  if(tltp>=.80) return .80;
+  if(tltp>=.70) return .50;
+  if(tltp>=.60) return .30;
+  return 0;
+}
+function month13(q, yearIp, q4){
+  if(q4==='no') return 0;
+  if(q>=4) return 10000000;
+  if(q===3) return 5000000;
+  if(q===2) return 3000000;
+  if(q===1 && yearIp>=50000000) return 1000000;
+  return 0;
+}
+function calculate(){
+  const [fy,fm]=str('forecastMonth').split('-').map(Number);
+  const month=fm||1;
+  const ips=monthNames.map((_,i)=>val('ip'+(i+1)));
+  const tenure=calcTenure(str('startDate'),str('forecastMonth'));
+  const stage=tenure<1?'-':tenure<=3?'Chặng 1':tenure<=6?'Chặng 2':tenure<=9?'Chặng 3':tenure<=12?'Chặng 4':'Hết 12 tháng TVV mới';
+  const current=ips[month-1]||0;
+  const prior=month===1?val('priorOutside'):(ips[month-2]||0);
+  const qStart=Math.floor((month-1)/3)*3;
+  const quarterIp=ips.slice(qStart,month).reduce((a,b)=>a+b,0);
+  const posInStage=tenure>0?(tenure-1)%3:0;
+  let stageIp=current;
+  if(posInStage>=1 && month>=2) stageIp+=ips[month-2]||0;
+  if(posInStage>=2 && month>=3) stageIp+=ips[month-3]||0;
+  const yearIp=ips.reduce((a,b)=>a+b,0);
+  const cr=val('commissionRate');
+  const fyc=current*cr;
+  const commission=fyc;
+  const pRate=productivityRate(current,prior);
+  const productivity=fyc*pRate;
+  const trained=str('training')==='yes';
+  let newMonthly=0;
+  if(tenure>=1 && tenure<=12 && current>=12000000){
+    newMonthly=tenure<=3?1000000:(trained?1000000:500000);
+  }
+  let stageBonus=0;
+  if(tenure>=1 && tenure<=12){
+    if(tenure<=3){
+      if(stageIp>=100000000) stageBonus=6000000;
+      else if(stageIp>=50000000) stageBonus=3000000;
+    }else if(stageIp>=50000000){
+      stageBonus=trained?3000000:1500000;
+    }
+  }
+  const qRate=quarterRate(quarterIp);
+  const adj=adjustment(val('pr15'),val('tltp'),val('collectedFee'));
+  const quarterBonus=quarterIp*cr*qRate*adj;
+  const annual=month13(val('qualifiedQuarters'),yearIp,str('q4active'));
+  const other=val('otherBonus');
+  const total=commission+productivity+newMonthly+stageBonus+quarterBonus+annual+other;
+
+  document.getElementById('tenure').textContent=tenure+' tháng';
+  document.getElementById('stage').textContent=stage;
+  document.getElementById('currentIp').textContent=fmt(current);
+  document.getElementById('quarterIp').textContent=fmt(quarterIp);
+  document.getElementById('stageIp').textContent=fmt(stageIp);
+  document.getElementById('yearIp').textContent=fmt(yearIp);
+
+  const rows=[
+    ['Hoa hồng khai thác', current>0?'Được tính':'Không phát sinh', commission],
+    ['Thưởng năng suất tháng', prior<=3000000?'Không đủ ĐK hoạt động tháng trước':pRate?'Đủ điều kiện':'Chưa đạt mốc IP', productivity],
+    ['Thưởng tháng TVV mới', tenure>12?'Hết thời gian TVV mới':current<12000000?'Chưa đạt IP 12 triệu':'Đủ điều kiện', newMonthly],
+    ['Thưởng chặng TVV mới', stageBonus?'Tạm đạt theo lũy kế':'Chưa đạt mốc chặng', stageBonus],
+    ['Thưởng Quý tạm tính', val('pr15')<.85?'Không đạt PR15':qRate?'Tạm đủ điều kiện':'Chưa đạt mốc FYP quý', quarterBonus],
+    ['Thưởng Tháng 13 dự kiến', str('q4active')==='no'?'Không đủ ĐK Quý IV':str('q4active')==='unknown'?'Dự kiến - cần duy trì QIV':'Dự kiến đủ điều kiện', annual],
+    ['Thưởng/thi đua khác', other?'Đã nhập':'Không phát sinh', other],
+  ];
+  const tbody=document.getElementById('incomeRows');
+  tbody.innerHTML=rows.map(r=>`<tr><td>${r[0]}</td><td class="hide-mobile ${r[1].startsWith('Không')?'warn':'ok'}">${r[1]}</td><td class="money">${fmt(r[2])}</td></tr>`).join('')
+    +`<tr class="total"><td colspan="2">TỔNG THU NHẬP DỰ KIẾN</td><td class="money">${fmt(total)}</td></tr>`;
+
+  const w=[];
+  if(!str('name')) w.push('Chưa nhập họ tên TVV.');
+  if(tenure<1) w.push('Ngày bắt đầu làm việc hoặc tháng dự báo không hợp lệ.');
+  if(val('pr15')<.85) w.push('PR15 dưới 85%: không có thưởng Quý.');
+  if(prior<=3000000) w.push('Không đủ điều kiện hoạt động tháng trước cho thưởng năng suất.');
+  if(str('q4active')==='unknown') w.push('Thưởng Tháng 13 mới là dự kiến; cần xác nhận hoạt động Quý IV.');
+  if(tenure>3 && tenure<=12 && !trained) w.push('Chưa hoàn thành đào tạo Chặng 1: thưởng TVV mới bị giảm.');
+  document.getElementById('warnings').innerHTML=w.length?w.map(x=>'• '+x).join('<br>'):'Không có cảnh báo theo dữ liệu đã nhập.';
+  saveData(false);
+}
+function getData(){
+  const ids=['name','forecastMonth','startDate','commissionRate','training','pr15','tltp','collectedFee','qualifiedQuarters','q4active','priorOutside','otherBonus'];
+  const d={};
+  ids.forEach(id=>d[id]=document.getElementById(id).value);
+  d.ips=monthNames.map((_,i)=>document.getElementById('ip'+(i+1)).value);
+  return d;
+}
+function saveData(alertUser=true){
+  localStorage.setItem('tvvIncome2026',JSON.stringify(getData()));
+  if(alertUser) alert('Đã lưu dữ liệu trên thiết bị.');
+}
+function loadData(){
+  const raw=localStorage.getItem('tvvIncome2026');
+  if(!raw) return;
+  const d=JSON.parse(raw);
+  Object.keys(d).forEach(k=>{
+    if(k!=='ips' && document.getElementById(k)) document.getElementById(k).value=d[k];
+  });
+  (d.ips||[]).forEach((v,i)=>{ if(document.getElementById('ip'+(i+1))) document.getElementById('ip'+(i+1)).value=v; });
+}
+function resetData(){
+  if(!confirm('Xóa toàn bộ dữ liệu đã nhập?')) return;
+  localStorage.removeItem('tvvIncome2026');
+  location.reload();
+}
+buildMonths();
+loadData();
+calculate();
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('service-worker.js').catch(()=>{}); }
+</script>
+</body>
+</html>
